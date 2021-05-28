@@ -11,12 +11,11 @@ class InstcondAnalyzer(Analyzer):
             ('ge', 0xA0000000), ('lt', 0xB0000000), ('gt', 0xC0000000), ('le', 0xD0000000),
             ('al', 0xE0000000)]
 
-
     def __init__(self):
         Analyzer.__init__(self)
         # definition of the (instance) parsing graph
         self.graph = {0:  # initial state
                           ([(None, None, -3001, None),  # T30.0.0 EOSeq -> missing instruction condition
-                            (self.ent0, None, 1000, None)], # T30.0.1 positive detection
-                           -3002)                       # T30.0.2 unrecognizable condition
+                            (self.ent0, None, 1000, None)],  # T30.0.1 positive detection
+                           -3002)  # T30.0.2 unrecognizable condition
                       }

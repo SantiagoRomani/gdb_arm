@@ -6,15 +6,15 @@ class RangeDigitDetector(Analyzer):
 
     def analyze(self, text, init_pos, end_pos, super_result):
         value = 0
-        self.result = []                    # initially create an empty result
-        self.state = 1000                   # assume success detection state
+        self.result = []  # initially create an empty result
+        self.state = 1000  # assume success detection state
         try:
-            value = int(text[init_pos])     # try to obtain one digit value (base = 10)
+            value = int(text[init_pos])  # try to obtain one digit value (base = 10)
         except ValueError:
-            self.state = -1                 # if not a digit, set a failure state
+            self.state = -1  # if not a digit, set a failure state
         if (value < self.rlow) or (value > self.rhigh):
-            self.state = -2                 # if digit not between range, set a failure state
-        return self.result, self.state, init_pos      # do NOT advance the position of detected digit
+            self.state = -2  # if digit not between range, set a failure state
+        return self.result, self.state, init_pos  # do NOT advance the position of detected digit
 
     def __init__(self, rlow, rhigh):
         Analyzer.__init__(self)
@@ -29,26 +29,26 @@ class RadixNumberAnalyzer(Analyzer):
 
     def find_wrongpos(self, text, init_pos, end_pos):
         # type: (str, int, int) -> (int)
-        pos = init_pos                      # position to look for wrong digits
-        #if (self.radix == 10) and (text[pos] == '-'):
+        pos = init_pos  # position to look for wrong digits
+        # if (self.radix == 10) and (text[pos] == '-'):
         #    pos = pos + 1                       # skip initial '-' for decimal negative numbers
-        wrong_digit = False                 # boolean for stating if a wrong digit has been found
+        wrong_digit = False  # boolean for stating if a wrong digit has been found
         while (pos < end_pos) and not wrong_digit:  # search for the wrong digit
-            digit = text[pos].lower()                   # avoid lower/upper confusion
+            digit = text[pos].lower()  # avoid lower/upper confusion
             wrong_digit = (not digit in self.digits) or (self.digits.index(digit) >= self.radix)
-            if not wrong_digit:                         # the digit is wrong if not in the list or
-                pos = pos + 1                           # it's numeric value (index) is above the radix
+            if not wrong_digit:  # the digit is wrong if not in the list or
+                pos = pos + 1  # it's numeric value (index) is above the radix
         return pos
 
     def analyze(self, text, init_pos, end_pos, super_result):
         value = 0
-        self.result = []                    # initially create an empty result
-        self.state = 1000                   # assume success parsing state
+        self.result = []  # initially create an empty result
+        self.state = 1000  # assume success parsing state
         pos = init_pos
-        try:                                # up to next delimiter or end of string,
+        try:  # up to next delimiter or end of string,
             value = int(text[init_pos:end_pos], base=self.radix)
-        except ValueError:                  # try to convert string to current radix
-            self.state = -1                 # when wrong conversion, set a failure state
+        except ValueError:  # try to convert string to current radix
+            self.state = -1  # when wrong conversion, set a failure state
             pos = self.find_wrongpos(text, init_pos, end_pos)
         if self.state == 1000:
             self.result.append(value)
@@ -75,8 +75,8 @@ class NumberAnalyzer(Analyzer):
     def check_limits(self, match, sub_result, sub_state, super_result):
         override = 0
         if match:
-            if (sub_result[0] >= 2**32) or (sub_result[0] < -2**31):
-                override = -1006            # too big number error
+            if (sub_result[0] >= 2 ** 32) or (sub_result[0] < -2 ** 31):
+                override = -1006  # too big number error
         return override
 
     def invert_number(self, match, sub_result, sub_state, super_result):
@@ -91,43 +91,42 @@ class NumberAnalyzer(Analyzer):
             self.result.append(0)
         return 0
 
-
     def __init__(self):
         Analyzer.__init__(self)
         # definition of the (instance) parsing graph
         self.graph = {0:  # initial state
                           ([(None, None, -1001, None),  # T10.0.0 EOSeq -> missing number error
-                            (' ', None, 0, None),       # T10.0.1 white spaces -> keep state
-                            ('0b', None, 1, None),      # T10.0.2 binary prefix -> go to 1
-                            ('0x', None, 2, None),      # T10.0.3 hexadecimal prefix -> go to 2
-                            ('0', None, 3, None),       # T10.0.4 possibly octal prefix -> go to 3
-                            ('-', None, 4, None),       # T10.0.5 negative decimal prefix -> go to 4
-                            ('+', None, 6, None),       # T10.0.6 positive decimal prefix -> go to 6
+                            (' ', None, 0, None),  # T10.0.1 white spaces -> keep state
+                            ('0b', None, 1, None),  # T10.0.2 binary prefix -> go to 1
+                            ('0x', None, 2, None),  # T10.0.3 hexadecimal prefix -> go to 2
+                            ('0', None, 3, None),  # T10.0.4 possibly octal prefix -> go to 3
+                            ('-', None, 4, None),  # T10.0.5 negative decimal prefix -> go to 4
+                            ('+', None, 6, None),  # T10.0.6 positive decimal prefix -> go to 6
                             (self.dec_range_detector, None, 5, None)],  # T10.0.7 decimal digit -> go to 5
-                           -1001),                      # T10.0.8 missing number error
+                           -1001),  # T10.0.8 missing number error
                       1:  # parsing next binary digits
                           ([(None, None, -1002, None),  # T10.1.0 EOSeq -> malformed number error
                             (self.bin_number_analyzer, None, 1000, self.check_limits)],  # T10.1.1
-                           -1002),                      # T10.1.2
+                           -1002),  # T10.1.2
                       2:  # parsing next hexadecimal digits
                           ([(None, None, -1005, None),  # T10.2.0 EOSeq -> malformed number error
                             (self.hex_number_analyzer, None, 1000, self.check_limits)],  # T10.2.1
-                           -1005),                      # T10.2.2
+                           -1005),  # T10.2.2
                       3:  # parsing next octal digits
                           ([(None, None, 1000, self.insert_zero),  # T10.3.0 EOSeq -> keep first octal digit
                             (self.oct_number_analyzer, None, 1000, self.check_limits)],  # T10.3.1
-                           -1003),                      # T10.3.2
+                           -1003),  # T10.3.2
                       4:  # parsing next decimal digits (negative number)
                           ([(None, None, -1004, None),  # T10.4.0 EOSeq -> malformed number error
                             (self.dec_number_analyzer, None, 1000, self.invert_number)],
-                                                        # T10.4.1 decimal digit -> invert value
-                           -1004),                      # T10.4.2 malformed number error
+                           # T10.4.1 decimal digit -> invert value
+                           -1004),  # T10.4.2 malformed number error
                       5:  # parsing next decimal digits
                           ([(None, None, 1000, None),  # T10.5.0 EOSeq -> NEVER followed (T10.0.6 don't advance pos)
                             (self.dec_number_analyzer, None, 1000, self.check_limits)],  # T10.5.1
-                           -1004),                      # T10.5.2 malformed number error
+                           -1004),  # T10.5.2 malformed number error
                       6:  # parsing next decimal digits
                           ([(None, None, -1004, None),  # T10.5.0 EOSeq -> malformed number error
                             (self.dec_number_analyzer, None, 1000, self.check_limits)],  # T10.5.1
-                           -1004),                      # T10.5.2 malformed number error
+                           -1004),  # T10.5.2 malformed number error
                       }

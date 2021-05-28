@@ -1,6 +1,7 @@
-from arm_tests import imem_arm
+from tests.arm_tests import imem_arm
 from gerrors import gerror_dict
 from arm_analyzer import ArmAnalyzer
+
 
 class Assemble():
     """In-line assembler of ARM assembly instructions and data directives (v1.0)
@@ -44,17 +45,17 @@ class Assemble():
         (result, state, pos) = self.ARM_analyzer.analyze(arg, 0, len(arg), [])
         print arg
         if state > 0:
-            rid = 0                         # Reference InDex: for accessing several (address, content) tuples
-            while rid < len(result):        # while there are (address, content) tuples),
-                address = result[rid]           # get the address and type of content
-                data_type = ('char', 'short', 'unknown', 'int')[result[rid+1][0] - 1]
-                for data in result[rid+1][1:]:      # traverse all data values and issue a gdb 'set' command
+            rid = 0  # Reference InDex: for accessing several (address, content) tuples
+            while rid < len(result):  # while there are (address, content) tuples),
+                address = result[rid]  # get the address and type of content
+                data_type = ('char', 'short', 'unknown', 'int')[result[rid + 1][0] - 1]
+                for data in result[rid + 1][1:]:  # traverse all data values and issue a gdb 'set' command
                     print "set *(unsigned {0:s} *)(0x{1:X}) = 0x{2:0{width}X}".format(data_type, address, data,
-                                                                                    width = result[rid+1][0] * 2)
-                    address = address + result[rid+1][0]    # advance address for next data value
-                rid = rid + 2                   # advance to next (address, content) tuple
+                                                                                      width=result[rid + 1][0] * 2)
+                    address = address + result[rid + 1][0]  # advance address for next data value
+                rid = rid + 2  # advance to next (address, content) tuple
         else:
-            print '{message: >{width}}'.format(message = '^', width = pos + 1)
+            print '{message: >{width}}'.format(message='^', width=pos + 1)
             print "ERROR: " + gerror_dict[state]
 
 
@@ -62,6 +63,7 @@ def main():
     assembler = Assemble()
     for test_tuple in imem_arm:
         assembler.invoke(test_tuple[0])
+
 
 if __name__ == "__main__":
     main()

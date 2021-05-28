@@ -1,5 +1,5 @@
 """ ARM assembly """
-from arm_tests import test_groups
+from tests.arm_tests import test_groups
 
 
 def test_group(analyzer, test_list, verbose):
@@ -20,7 +20,7 @@ def test_group(analyzer, test_list, verbose):
                 if (len(test_tuple[1]) == 1) and (len(result) == 1):
                     print "\t\t\t\t\texpected result: [%#x] \tobtained result: [%#x]" % (test_tuple[1][0], result[0])
                 elif (len(test_tuple[1]) == 2) and (len(result) == 2) and isinstance(result[1], int):
-                    print "\t\t\t\t\texpected result: [%d, %#x] \tobtained result: [%d, %#x]" %\
+                    print "\t\t\t\t\texpected result: [%d, %#x] \tobtained result: [%d, %#x]" % \
                           (test_tuple[1][0], test_tuple[1][1], result[0], result[1])
                 else:
                     print "\t\t\t\t\texpected result: " + str(test_tuple[1]) + "\tobtained result: " + str(result)
@@ -45,7 +45,7 @@ def main():
         succeded_tests += success
         positive_tests += positive
 
-    print "\nTotal tests = %d\nTotal succeded tests = %d\n\t> positive cases = %d\n\t> negative cases = %d"\
+    print "\nTotal tests = %d\nTotal succeded tests = %d\n\t> positive cases = %d\n\t> negative cases = %d" \
           % (total_tests, succeded_tests, positive_tests, (succeded_tests - positive_tests))
 
 
