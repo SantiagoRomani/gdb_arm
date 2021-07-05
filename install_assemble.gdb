@@ -1,7 +1,7 @@
 python
 import sys
 
-sys.path[0] = 'c:\\GEI\\bmde\\devkitPro\\insight\\share\\gdb\\python\\inline_assembler'
+sys.path[0] = 'c:\\URV\\bmde\\devkitPro\\insight\\share\\gdb\\python\\inline-assembly'
 
 from arm_analyzer import ArmAnalyzer
 from gerrors import gerror_dict
@@ -11,7 +11,7 @@ class Assemble(gdb.Command):
     """In-line assembler of ARM assembly instructions and data directives (v1.0)
        'assemble' is a user command extension for assembling ARM instructions
        from the gdb console.
-       This command uses python source code available inside 'inline-assembler'
+       This command uses python source code available inside 'inline-assembly'
        directory, which is included within the gdb's python directory (e.g.,
        <gdb's binary directory>/../share/gdb/python).
        Usage: 'assemble ADDRESS INSTRUCTION'
