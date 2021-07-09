@@ -12,12 +12,12 @@ class Assemble(gdb.Command):
        'assemble' is a user command extension for assembling ARM instructions
        right in gdb's console.
        This command is implemented in python 2.7. Its code allocated within
-	   the 'inline-assembly' directory, which must be placed into the gdb's
+       the 'inline-assembly' directory, which must be placed into the gdb's
        python directory (e.g., <gdb's binary directory>/../share/gdb/python).
        
        Usage (after gdb's prompt):
 	   
-			(gdb) assemble ADDRESS INSTRUCTION
+           (gdb) assemble ADDRESS INSTRUCTION
 		
        You can also use shortcuts for 'assemble', like 'assem' or 'as'
        For 'ADDRESS', you can type an hexadecimal value, such as '0x82FC' or
@@ -37,15 +37,14 @@ class Assemble(gdb.Command):
            (gdb) as > ldr r4, =0x8BE45002
            (gdb) as > strgtb r0, [lr, r2, lsl #3]
            etc.
-        To check the assembly, you can use gdb commands like 'disassemble ADDR'
-        or 'x /i ADDR'. If your gdb is TUI enabled, you can also view the
-        machine language code in a curses-driven window, but you must update
-        its content by moving the view around (e.g., pressing any arrow key)
-		after the inline assembly.
+       To check the assembly, you can use gdb commands like 'disassemble ADDR'
+       or 'x /i ADDR'. If your gdb is TUI enabled, you can also view the
+       machine language code in a curses-driven window, but you must update
+       its content by moving the view around (e.g., pressing any arrow key)
+       after the inline assembly.
 		
-		The source code and extra information of this command is available at
-		the following github repository:
-			https://github.com/SantiagoRomani/gdb_arm.git
+       The source code and extra information of this command is available at
+           https://github.com/SantiagoRomani/gdb_arm.git
     """
 
     def __init__(self):
