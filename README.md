@@ -30,16 +30,16 @@ You can copy it into any directory of your convenience. The ideal place would be
 A workaround for an automatic installation of the `assemble` command can be to insert the previous sourcing command into your local ´.gdbinit´ file.<br>
 Besides, you will have to modify the following python instruction in the ´install_assemble.gdb´ file:
 ```
-sys.path[0] = 'c:\\GEI\\bmde\\devkitPro\\insight\\share\\gdb\\python\\inline_assembler'
+sys.path[0] = 'c:\\URV\\bmde\\devkitPro\\insight\\share\\gdb\\python\\inline-assembly'
 ```
-The current code is pointing to my local installation of gdb's python directory, but you must include your own path into the system path so that Python can find the bunch of scripts that conform the `assemble` command.
+The path shown in previous source code is pointing to my local installation of gdb's python directory, but you must include your own path so that Python can find the bunch of scripts that conform the `assemble` command.
 
 ## Usage
 ```
 (gdb) assemble ADDRESS INSTRUCTION
 ```
 You can also use shortcuts for `assemble`, like `assem` or `as`.<br>
-For `ADDRESS`, you can type any hexadecimal value that fits in 32 bits, such as `0x82FC`, or you can simply type `>` for assembling into the memory address after the last assembled instruction or data.<br>
+For `ADDRESS`, you can type any hexadecimal value that fits in 32 bits, such as `0x82FC`, or you can simply type `>` for assembling into next memory address after last assembled instruction or data.<br>
 For `INSTRUCTION`, you can type any data directive or ARM instruction recognized by the GNU GAS assembler.<br>
 Examples:<br>
 ```

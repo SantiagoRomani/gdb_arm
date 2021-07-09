@@ -8,35 +8,44 @@ from gerrors import gerror_dict
 
 
 class Assemble(gdb.Command):
-    """In-line assembler of ARM assembly instructions and data directives (v1.0)
+    """Inline assembler of ARM assembly instructions and data directives;
        'assemble' is a user command extension for assembling ARM instructions
-       from the gdb console.
-       This command uses python source code available inside 'inline-assembly'
-       directory, which is included within the gdb's python directory (e.g.,
-       <gdb's binary directory>/../share/gdb/python).
-       Usage: 'assemble ADDRESS INSTRUCTION'
+       right in gdb's console.
+       This command is implemented in python 2.7. Its code allocated within
+	   the 'inline-assembly' directory, which must be placed into the gdb's
+       python directory (e.g., <gdb's binary directory>/../share/gdb/python).
+       
+       Usage (after gdb's prompt):
+	   
+			(gdb) assemble ADDRESS INSTRUCTION
+		
        You can also use shortcuts for 'assemble', like 'assem' or 'as'
        For 'ADDRESS', you can type an hexadecimal value, such as '0x82FC' or
        any other value up to 2^32, or you can simply type '>' for assembling
-       into the address next to the previous instruction or directive.
+       into next memory address after last assembled instruction or data.
        For 'INSTRUCTION', you can type a data directive or an ARM instruction
        recognized by the GNU GAS assembler.
-       Examples (do not type (gdb)):
+       Examples:
            (gdb) as 0x200 .byte 34, -1, 0x6A, 'h', 89
            (gdb) as > .hword 0b10010011101010, 35921
            (gdb) assem 0x8000 add r0, pc, lsr #2
            (gdb) assem > eorhi r8, #0b011000
            (gdb) assemble > umull r4, r5, r8, r3
-           (gdb) as 0x8028 cmp r5, r6, asr r2
-           (gdb) as > bne 0x801C
+           (gdb) as 0x8018 cmp r5, r6, asr r2
+           (gdb) as > bne 0x802C
            (gdb) as > ldsh r12, [sp, #0x80]
            (gdb) as > ldr r4, =0x8BE45002
-           (gdb) as > strgtb r0, [pc, r2, lsl #3]
+           (gdb) as > strgtb r0, [lr, r2, lsl #3]
            etc.
         To check the assembly, you can use gdb commands like 'disassemble ADDR'
         or 'x /i ADDR'. If your gdb is TUI enabled, you can also view the
         machine language code in a curses-driven window, but you must update
-        its content by moving the view around, e.g., pressing any arrow key.
+        its content by moving the view around (e.g., pressing any arrow key)
+		after the inline assembly.
+		
+		The source code and extra information of this command is available at
+		the following github repository:
+			https://github.com/SantiagoRomani/gdb_arm.git
     """
 
     def __init__(self):
